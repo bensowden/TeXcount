@@ -7,12 +7,15 @@ class TexcountCommand(sublime_plugin.TextCommand):
 
 		# Check a file is selected
 		if filename == None:
-			sublime.error_message("No file selected")
+			sublime.error_message("No file in focus")
 			return
 
 		# Save if file has been edited since last save
 		if (self.view.is_dirty()):
-			self.view.run_command('save')
+			if (sublime.ok_cancel_dialog("File has changes, save to run TeXcount","Save")):
+				self.view.run_command('save')
+			else:
+				return
 
 		# Cleanse name and make shell command
 		filename = filename.replace(" ","\ ")
@@ -32,8 +35,15 @@ class TexcountCommand(sublime_plugin.TextCommand):
 		p = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE)
 		out, err = p.communicate()
 
-		# Display Sublime console and print texcount output to console
-		sublime.active_window().run_command("show_panel", {"panel": "console", "toggle": True})
+		# Display output
 		out = out.strip()
-		print(out)
+		outputpanel = self.view.window().get_output_panel("texcountoutput")
+		outputpanel.set_read_only(False)
+		edit = outputpanel.begin_edit()
+		outputpanel.insert(edit, outputpanel.size(), out)
+		outputpanel.show(outputpanel.size())
+		outputpanel.end_edit(edit)
+		outputpanel.set_read_only(True)
+		sublime.active_window().run_command("show_panel", {"panel": "output.texcountoutput", "toggle": True})
+
 		return

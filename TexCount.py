@@ -42,6 +42,7 @@ class TexcountCommand(sublime_plugin.TextCommand):
 		edit = outputpanel.begin_edit()
 		outputpanel.insert(edit, outputpanel.size(), out)
 		outputpanel.show(outputpanel.size())
+		outputpanel.show(sublime.Region(0))
 		outputpanel.end_edit(edit)
 		outputpanel.set_read_only(True)
 		sublime.active_window().run_command("show_panel", {"panel": "output.texcountoutput", "toggle": True})

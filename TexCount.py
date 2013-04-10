@@ -1,9 +1,10 @@
 import sublime, sublime_plugin
 from subprocess import PIPE, Popen
+import getTeXRoot
 
 class TexcountCommand(sublime_plugin.TextCommand):
 	def run(self, edit):
-		filename = self.view.file_name()
+		filename = getTeXRoot.get_tex_root(self.view)
 
 		# Check a file is selected
 		if filename == None:
@@ -19,7 +20,7 @@ class TexcountCommand(sublime_plugin.TextCommand):
 
 		# Cleanse name and make shell command
 		filename = filename.replace(" ","\ ")
-		cmd = "texcount " + filename
+		cmd = "texcount -merge " + filename
 
 		# MacTex fix
 		cmd = "PATH=$PATH:/usr/texbin; " + cmd

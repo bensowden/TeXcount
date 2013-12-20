@@ -1,6 +1,15 @@
 import sublime, sublime_plugin
 from subprocess import PIPE, Popen
-import getTeXRoot
+if sublime.version() < '3000':
+    # we are on ST2 and Python 2.X
+	_ST3 = False
+	import getTeXRoot
+else:
+	_ST3 = True
+	try:
+		from LaTeXTools import getTeXRoot
+	except:
+		from TeXcount import getTeXRoot
 
 class TexcountCommand(sublime_plugin.TextCommand):
 	def run(self, edit):
@@ -38,14 +47,22 @@ class TexcountCommand(sublime_plugin.TextCommand):
 
 		# Display output
 		out = out.strip()
-		outputpanel = self.view.window().get_output_panel("texcountoutput")
-		outputpanel.set_read_only(False)
-		edit = outputpanel.begin_edit()
-		outputpanel.insert(edit, outputpanel.size(), out)
-		outputpanel.show(outputpanel.size())
-		outputpanel.show(sublime.Region(0))
-		outputpanel.end_edit(edit)
-		outputpanel.set_read_only(True)
-		sublime.active_window().run_command("show_panel", {"panel": "output.texcountoutput", "toggle": True})
+		if (_ST3):
+			outputpanel = self.view.window().create_output_panel("texcountoutput")
+			outputpanel.set_read_only(False)
+			outputpanel.run_command('erase_view')
+			outputpanel.run_command('append', {'characters': out.decode()})
+			outputpanel.set_read_only(True)
+			sublime.active_window().run_command("show_panel", {"panel": "output.texcountoutput"})
+		else:
+			outputpanel = self.view.window().get_output_panel("texcountoutput")
+			outputpanel.set_read_only(False)
+			edit = outputpanel.begin_edit()
+			outputpanel.insert(edit, outputpanel.size(), out)
+			outputpanel.show(outputpanel.size())
+			outputpanel.show(sublime.Region(0))
+			outputpanel.end_edit(edit)
+			outputpanel.set_read_only(True)
+			sublime.active_window().run_command("show_panel", {"panel": "output.texcountoutput", "toggle": True})
 
 		return

@@ -1,12 +1,12 @@
 TeXcount
 ========
 
-A [Sublime Text 2](http://www.sublimetext.com/) package to provide access to [TeXcount](http://app.uio.no/ifi/texcount/) from a simple keyboard shortcut: `cmd+l, w` on OS X, and `ctrl+l, w` on Linux.
+A [Sublime Text 2 and 3](http://www.sublimetext.com/) package to provide access to [TeXcount](http://app.uio.no/ifi/texcount/) from a simple keyboard shortcut: `cmd+l, w` on OS X, and `ctrl+l, w` on Linux.
 
 Installation
 ------------
 
-Checkout to Sublime Text 2 Packages folder.
+Checkout to Sublime Text 2/3 Packages folder.
 
 Or with Package Control:
 

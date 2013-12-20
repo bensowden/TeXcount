@@ -71,5 +71,4 @@ def get_tex_root(view):
 	if is_file: # Not very Pythonic, but works...
 		lines.close()
 
-	# return root
-	return "lies!"
+	return root

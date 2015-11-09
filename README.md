@@ -3,6 +3,10 @@ TeXcount
 
 A [Sublime Text 2 and 3](http://www.sublimetext.com/) package to provide access to [TeXcount](http://app.uio.no/ifi/texcount/) from a simple keyboard shortcut: `cmd+l, w` on OS X, and `ctrl+l, w` on Linux.
 
+Credits
+------------
+Modifications made by [Matthew Bedder](https://github.com/bedder) to make it work in Windows have been incorportated (no direct credit in log as he didn't submit a pull request).
+
 Installation
 ------------
 

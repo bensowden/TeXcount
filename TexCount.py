@@ -1,7 +1,9 @@
 import sublime, sublime_plugin
+import os
+import platform
 from subprocess import PIPE, Popen
 if sublime.version() < '3000':
-	# we are on ST2 and Python 2.X
+    # we are on ST2 and Python 2.X
 	_ST3 = False
 	import getTeXRoot
 else:
@@ -20,6 +22,8 @@ class TexcountCommand(sublime_plugin.TextCommand):
 			sublime.error_message("No file in focus")
 			return
 
+		dirName = os.path.dirname(filename)
+
 		# Save if file has been edited since last save
 		if (self.view.is_dirty()):
 			if (sublime.ok_cancel_dialog("File has changes, save to run TeXcount","Save")):
@@ -31,18 +35,24 @@ class TexcountCommand(sublime_plugin.TextCommand):
 		filename = filename.replace(" ","\ ")
 		cmd = "texcount -merge " + filename
 
+		pathChange = ''
 		# MacTex fix
-		cmd = "PATH=$PATH:/usr/texbin:/Library/TeX/texbin; " + cmd
+		if platform.system() != 'Windows':
+			pathChange = "PATH=$PATH:/usr/texbin:/Library/TeX/texbin; "
+			cmd = pathChange + cmd
 
 		# Test to see if texcount is installed and in available PATH
-		testcmdprocess = Popen("PATH=$PATH:/usr/texbin:/Library/TeX/texbin; which texcount", shell=True, stdout=PIPE, stderr=PIPE)
+		if platform.system() != 'Windows':
+			testcmdprocess = Popen(pathChange + "which texcount", shell=True, stdout=PIPE, stderr=PIPE)
+		else:
+			testcmdprocess = Popen(pathChange + "texcount", shell=True, stdout=PIPE, stderr=PIPE)
 		testout, testerr = testcmdprocess.communicate()
 		if (testout == ""):
 			sublime.error_message("TeXcount not installed in PATH \nDownload from: http://app.uio.no/ifi/texcount/")
 			return
 
 		# Excecute texcount and collect output
-		p = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE)
+		p = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE, cwd=dirName, universal_newlines=True)
 		out, err = p.communicate()
 
 		# Display output
@@ -51,7 +61,7 @@ class TexcountCommand(sublime_plugin.TextCommand):
 			outputpanel = self.view.window().create_output_panel("texcountoutput")
 			outputpanel.set_read_only(False)
 			outputpanel.run_command('erase_view')
-			outputpanel.run_command('append', {'characters': out.decode()})
+			outputpanel.run_command('append', {'characters': out})
 			outputpanel.set_read_only(True)
 			sublime.active_window().run_command("show_panel", {"panel": "output.texcountoutput"})
 		else:

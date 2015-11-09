@@ -1,7 +1,7 @@
 import sublime, sublime_plugin
 from subprocess import PIPE, Popen
 if sublime.version() < '3000':
-    # we are on ST2 and Python 2.X
+	# we are on ST2 and Python 2.X
 	_ST3 = False
 	import getTeXRoot
 else:
@@ -32,10 +32,10 @@ class TexcountCommand(sublime_plugin.TextCommand):
 		cmd = "texcount -merge " + filename
 
 		# MacTex fix
-		cmd = "PATH=$PATH:/usr/texbin; " + cmd
+		cmd = "PATH=$PATH:/usr/texbin:/Library/TeX/texbin; " + cmd
 
 		# Test to see if texcount is installed and in available PATH
-		testcmdprocess = Popen("PATH=$PATH:/usr/texbin; which texcount", shell=True, stdout=PIPE, stderr=PIPE)
+		testcmdprocess = Popen("PATH=$PATH:/usr/texbin:/Library/TeX/texbin; which texcount", shell=True, stdout=PIPE, stderr=PIPE)
 		testout, testerr = testcmdprocess.communicate()
 		if (testout == ""):
 			sublime.error_message("TeXcount not installed in PATH \nDownload from: http://app.uio.no/ifi/texcount/")
